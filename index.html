@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Virtual Lab | Electric Generator</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#f3f7fb;color:#19324b;
+ font-family:Arial,Helvetica,sans-serif;
+}
+header{
+ background:white;border-bottom:1px solid #dce5ed;
+ padding:17px 25px;display:flex;justify-content:space-between;
+ align-items:center;gap:12px;flex-wrap:wrap;
+}
+h1{font-size:23px;margin:0;color:#176caa}
+h2{font-size:17px;margin:0 0 14px}
+small{color:#60758b}
+main{
+ max-width:1450px;margin:auto;padding:20px;
+ display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:18px;
+}
+.panel{
+ background:white;border:1px solid #e1e8ef;
+ border-radius:13px;padding:17px;
+ box-shadow:0 3px 12px #17385809;
+}
+.scene{padding:8px}
+svg{width:100%;height:auto;display:block}
+.controls label{
+ display:flex;justify-content:space-between;
+ margin:19px 0 7px;font-size:13px;font-weight:bold;
+}
+input[type=range]{width:100%;accent-color:#1689d3;cursor:pointer}
+button{
+ border:0;border-radius:8px;padding:11px 16px;
+ background:#1677bc;color:white;font-weight:bold;cursor:pointer;
+}
+button:hover{filter:brightness(.92)}
+button.secondary{background:#e7eef5;color:#284763}
+.buttons{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+.metrics{
+ display:grid;grid-template-columns:repeat(4,1fr);
+ gap:10px;margin-top:12px;
+}
+.metric{background:#edf5fb;border-radius:9px;padding:13px}
+.metric strong{display:block;font-size:23px;margin-top:7px;color:#126cac}
+.metric span{font-size:12px;color:#526a80}
+canvas{width:100%;height:160px;display:block}
+.bottom{max-width:1450px;margin:0 auto 25px;padding:0 20px}
+.info{font-size:14px;line-height:1.7;color:#435a6c}
+.water{stroke:#25bafa;stroke-width:9;stroke-linecap:round;fill:none}
+#turbine,#rotor{transform-box:fill-box;transform-origin:center}
+#lampGlow{transition:opacity .08s}
+@media(max-width:850px){
+ main{grid-template-columns:1fr}
+ .metrics{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+ <div>
+  <h1>⚡ Virtual Science Lab</h1>
+  <small>Experiment: Electromagnetic Induction – AC Generator</small>
+ </div>
+ <span>Interactive Physics Simulator</span>
+</header>
+
+<main>
+
+<section>
+ <div class="panel">
+  <h2>Hydroelectric Generator</h2>
+
+  <div class="scene">
+   <svg viewBox="0 0 850 470" role="img"
+    aria-label="Water turbine connected to a rotating magnet inside a stationary copper coil, powering a bulb and galvanometer">
+
+    <defs>
+     <radialGradient id="bulbColor">
+      <stop offset="0%" stop-color="#fff9b0"/>
+      <stop offset="100%" stop-color="#ffc52d"/>
+     </radialGradient>
+     <linearGradient id="pipeColor">
+      <stop stop-color="#7895a7"/>
+      <stop offset=".5" stop-color="#dce8ef"/>
+      <stop offset="1" stop-color="#7895a7"/>
+     </linearGradient>
+    </defs>
+
+    <!-- Water supply -->
+    <text x="35" y="30" font-size="16" font-weight="bold" fill="#315b77">
+     WATER SUPPLY
+    </text>
+
+    <rect x="40" y="42" width="150" height="72"
+      rx="8" fill="#d6f0ff" stroke="#268fca" stroke-width="3"/>
+    <rect x="44" y="62" width="142" height="48" fill="#59c5f8"/>
+    <path d="M190 78 H232 V125" stroke="url(#pipeColor)"
+      stroke-width="24" fill="none" stroke-linejoin="round"/>
+
+    <path d="M232 126 L232 178" class="water" id="waterJet"/>
+
+    <text x="245" y="145" font-size="12" fill="#2484b4">Nozzle</text>
+
+    <!-- Turbine -->
+    <circle cx="232" cy="241" r="76" fill="#eef5f9"
+      stroke="#c7d7e1" stroke-width="2"/>
+
+    <g id="turbine">
+     <g fill="#4388b4" stroke="#28658d" stroke-width="2">
+      <path d="M232 241 L212 184 Q245 170 258 196 Z"/>
+      <path d="M232 241 L212 184 Q245 170 258 196 Z"
+       transform="rotate(60 232 241)"/>
+      <path d="M232 241 L212 184 Q245 170 258 196 Z"
+       transform="rotate(120 232 241)"/>
+      <path d="M232 241 L212 184 Q245 170 258 196 Z"
+       transform="rotate(180 232 241)"/>
+      <path d="M232 241 L212 184 Q245 170 258 196 Z"
+       transform="rotate(240 232 241)"/>
+      <path d="M232 241 L212 184 Q245 170 258 196 Z"
+       transform="rotate(300 232 241)"/>
+     </g>
+     <circle cx="232" cy="241" r="14" fill="#344f63"/>
+    </g>
+
+    <text x="200" y="341" font-size="15" fill="#315b77">Turbine</text>
+
+    <!-- Mechanical shaft -->
+    <path d="M246 241 H416" stroke="#91a6b7"
+      stroke-width="11" stroke-linecap="round"/>
+    <path d="M246 238 H416" stroke="#dce7ed"
+      stroke-width="3"/>
+    <text x="310" y="225" font-size="12" fill="#667c8e">Shaft</text>
+
+    <!-- Generator housing -->
+    <rect x="408" y="143" width="187" height="195" rx="19"
+      fill="#f2f7fa" stroke="#afc5d4" stroke-width="2"/>
+
+    <text x="454" y="132" font-size="16" font-weight="bold"
+      fill="#315b77">GENERATOR</text>
+
+    <!-- Stationary coil -->
+    <g id="coil" fill="none" stroke="#d78432"
+      stroke-width="3.5">
+     <ellipse cx="500" cy="240" rx="78" ry="72"/>
+     <ellipse cx="500" cy="240" rx="72" ry="76"/>
+     <ellipse cx="500" cy="240" rx="66" ry="80"/>
+     <ellipse cx="500" cy="240" rx="60" ry="83"/>
+     <ellipse cx="500" cy="240" rx="54" ry="85"/>
+    </g>
+
+    <!-- Rotating magnet -->
+    <g id="rotor">
+     <rect x="460" y="220" width="40" height="40"
+      fill="#e74e53" rx="3"/>
+     <rect x="500" y="220" width="40" height="40"
+      fill="#328bd9" rx="3"/>
+     <text x="480" y="245" text-anchor="middle"
+      fill="white" font-size="17" font-weight="bold">N</text>
+     <text x="520" y="245" text-anchor="middle"
+      fill="white" font-size="17" font-weight="bold">S</text>
+    </g>
+
+    <text x="458" y="352" font-size="12" fill="#667c8e">
+     Rotating magnet + fixed coil
+    </text>
+
+    <!-- Electrical circuit -->
+    <g stroke="#536c7e" stroke-width="3" fill="none">
+     <path d="M580 190 H665 V135 H724"/>
+     <path d="M580 295 H665 V380 H724 V209"/>
+    </g>
+
+    <!-- Bulb glow -->
+    <circle id="lampGlow" cx="724" cy="168" r="48"
+      fill="#ffdf53" opacity="0"/>
+
+    <!-- Bulb -->
+    <path id="bulb" d="M724 134
+      C699 134 693 164 707 180
+      Q715 190 715 199 H733
+      Q733 190 741 180
+      C755 164 749 134 724 134Z"
+      fill="#edf2f5" stroke="#8797a4" stroke-width="2"/>
+
+    <path d="M715 200 H733 M716 205 H732 M718 210 H730"
+      stroke="#687d8c" stroke-width="4"/>
+    <path d="M714 174 L724 186 L734 174"
+      fill="none" stroke="#8d7852" stroke-width="2"/>
+
+    <text x="705" y="116" font-size="14" fill="#315b77">Bulb</text>
+
+    <!-- Galvanometer -->
+    <circle cx="724" cy="310" r="36"
+      fill="#ffffff" stroke="#7b9ab0" stroke-width="3"/>
+
+    <path d="M700 316 A25 25 0 0 1 748 316"
+      stroke="#ccd9e1" stroke-width="2" fill="none"/>
+
+    <path id="needle" d="M724 310 L724 286"
+      stroke="#e34c4c" stroke-width="3"
+      stroke-linecap="round"/>
+
+    <circle cx="724" cy="310" r="4" fill="#263d51"/>
+    <text x="724" y="332" text-anchor="middle"
+      font-size="11" fill="#435b70">G</text>
+
+    <text x="672" y="365" font-size="13" fill="#315b77">
+     Galvanometer
+    </text>
+
+    <text x="30" y="429" fill="#657d90" font-size="13">
+     Water → Turbine → Rotating magnet → Changing magnetic flux → EMF
+    </text>
+
+   </svg>
+  </div>
+
+  <div class="buttons">
+   <button id="start">▶ Start</button>
+   <button id="pause" class="secondary">Ⅱ Pause</button>
+   <button id="reset" class="secondary">↺ Reset</button>
+  </div>
+
+  <div class="metrics">
+   <div class="metric">
+    <span>Instantaneous EMF</span>
+    <strong id="voltage">0.00 V</strong>
+   </div>
+   <div class="metric">
+    <span>Current</span>
+    <strong id="current">0.00 A</strong>
+   </div>
+   <div class="metric">
+    <span>Rotation speed</span>
+    <strong id="rpm">0 RPM</strong>
+   </div>
+   <div class="metric">
+    <span>Electrical power</span>
+    <strong id="power">0.00 W</strong>
+   </div>
+  </div>
+
+ </div>
+
+ <div class="panel" style="margin-top:15px">
+  <h2>Live Generated EMF</h2>
+  <canvas id="graph"></canvas>
+  <small>Time → | Voltage (V) ↑</small>
+ </div>
+</section>
+
+<aside>
+ <div class="panel controls">
+
+  <h2>Experiment Controls</h2>
+
+  <label>
+   Water flow
+   <span id="flowValue">50%</span>
+  </label>
+  <input id="flow" type="range" min="0" max="100" value="50">
+
+  <label>
+   Magnet strength
+   <span id="magnetValue">1.0 T</span>
+  </label>
+  <input id="magnet" type="range"
+   min="0.2" max="2" step="0.1" value="1">
+
+  <label>
+   Number of coil turns
+   <span id="turnValue">100</span>
+  </label>
+  <input id="turns" type="range"
+   min="20" max="300" step="10" value="100">
+
+  <label>
+   Load resistance
+   <span id="resValue">20 Ω</span>
+  </label>
+  <input id="resistance" type="range"
+   min="5" max="100" step="5" value="20">
+
+  <hr style="border:0;border-top:1px solid #e4eaf0;margin:23px 0">
+
+  <h2>Live Observations</h2>
+  <p class="info" id="observation">
+   Press Start to begin the experiment.
+  </p>
+
+  <hr style="border:0;border-top:1px solid #e4eaf0">
+
+  <h2 style="margin-top:20px">Physics Model</h2>
+  <p class="info">
+   Magnetic flux:<br>
+   Φ = BA cos(θ)
+  </p>
+  <p class="info">
+   Induced EMF:<br>
+   ε = NBAω sin(θ)
+  </p>
+  <p class="info">
+   Current:<br>
+   I = ε / R
+  </p>
+  <small>
+   Simplified ideal AC generator.
+   Coil area is fixed at 0.01 m².
+   Internal resistance and mechanical losses are neglected.
+  </small>
+
+ </div>
+</aside>
+
+</main>
+
+<div class="bottom">
+ <div class="panel">
+  <h2>Experiment Explanation</h2>
+  <p class="info">
+   When water strikes the turbine, it rotates the shaft.
+   The shaft rotates a magnet inside a stationary copper coil.
+   This changes the magnetic flux through the coil and induces
+   an alternating voltage according to Faraday's law.
+   The induced current powers the bulb and produces alternating
+   deflection in the galvanometer.
+  </p>
+ </div>
+</div>
+
+<script>
+// =============================
+// ELEMENTS
+// =============================
+
+const $ = id => document.getElementById(id);
+
+const flow = $("flow");
+const magnet = $("magnet");
+const turns = $("turns");
+const resistance = $("resistance");
+
+const canvas = $("graph");
+const ctx = canvas.getContext("2d");
+
+// =============================
+// SIMULATION STATE
+// =============================
+
+let running = false;
+let angle = 0;
+let previousTime = null;
+let samples = [];
+let voltage = 0;
+let current = 0;
+let power = 0;
+let rpm = 0;
+
+const AREA = 0.01;
+const TWO_PI = Math.PI * 2;
+
+// =============================
+// CONTROL VALUES
+// =============================
+
+function updateLabels(){
+ $("flowValue").textContent = flow.value + "%";
+ $("magnetValue").textContent =
+   Number(magnet.value).toFixed(1) + " T";
+ $("turnValue").textContent = turns.value;
+ $("resValue").textContent = resistance.value + " Ω";
+}
+
+[flow,magnet,turns,resistance].forEach(input=>{
+ input.addEventListener("input",()=>{
+  updateLabels();
+  calculate();
+  updateDisplay();
+ });
+});
+
+// =============================
+// PHYSICS
+// =============================
+
+function calculate(){
+
+ const water = Number(flow.value)/100;
+ const B = Number(magnet.value);
+ const N = Number(turns.value);
+ const R = Number(resistance.value);
+
+ // Simplified water-flow-to-speed relationship
+ rpm = running ? water * 240 : 0;
+
+ const omega = rpm * TWO_PI / 60;
+
+ // Faraday's law for a rotating magnet
+ voltage = N * B * AREA * omega * Math.sin(angle);
+
+ current = voltage/R;
+
+ // Instantaneous resistive power
+ power = current * current * R;
+}
+
+// =============================
+// UPDATE VISUAL ELEMENTS
+// =============================
+
+function updateDisplay(){
+
+ $("voltage").textContent = voltage.toFixed(2)+" V";
+ $("current").textContent = current.toFixed(3)+" A";
+ $("rpm").textContent = rpm.toFixed(0)+" RPM";
+ $("power").textContent = power.toFixed(2)+" W";
+
+ const water = Number(flow.value)/100;
+
+ $("waterJet").style.opacity =
+  running ? water : 0;
+
+ $("waterJet").style.strokeWidth =
+  3 + water*12;
+
+ const peakVoltage =
+  Number(turns.value) *
+  Number(magnet.value) *
+  AREA *
+  rpm*TWO_PI/60;
+
+ // Lamp brightness based on RMS power
+ const R = Number(resistance.value);
+ const rmsPower = peakVoltage*peakVoltage/(2*R);
+
+ const brightness = running
+  ? Math.min(1,rmsPower/20)
+  : 0;
+
+ $("lampGlow").setAttribute(
+  "opacity",(brightness*.75).toFixed(3)
+ );
+
+ $("bulb").setAttribute(
+  "fill",
+  brightness>0.01
+   ? `rgb(255,${Math.round(245-brightness*55)},${Math.round(190-brightness*150)})`
+   : "#edf2f5"
+ );
+
+ // Galvanometer needle: signed current
+ const maxCurrent = Math.max(0.1,peakVoltage/R);
+ const deflection =
+  Math.max(-1,Math.min(1,current/maxCurrent))*48;
+
+ $("needle").setAttribute(
+  "transform",`rotate(${deflection} 724 310)`
+ );
+
+ let message;
+
+ if(!running){
+  message = "Generator is stopped.";
+ }
+ else if(water===0){
+  message = "No water flow. The turbine is stationary, so no EMF is generated.";
+ }
+ else{
+  message =
+   "The turbine is rotating. Changing magnetic flux generates alternating EMF. " +
+   "Peak voltage: "+peakVoltage.toFixed(2)+" V. " +
+   "Increasing coil turns, magnetic field strength, or rotation speed increases the induced voltage.";
+ }
+
+ $("observation").textContent = message;
+}
+
+// =============================
+// GRAPH
+// =============================
+
+function drawGraph(){
+
+ const width = canvas.clientWidth;
+ const height = 160;
+ const dpr = window.devicePixelRatio || 1;
+
+ if(canvas.width !== Math.round(width*dpr) ||
+    canvas.height !== Math.round(height*dpr)){
+  canvas.width = Math.round(width*dpr);
+  canvas.height = Math.round(height*dpr);
+ }
+
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+ ctx.clearRect(0,0,width,height);
+
+ ctx.fillStyle="#fbfdff";
+ ctx.fillRect(0,0,width,height);
+
+ const middle = height/2;
+
+ ctx.strokeStyle="#e2eaf0";
+ ctx.lineWidth=1;
+
+ for(let y=20;y<height;y+=20){
+  ctx.beginPath();
+  ctx.moveTo(0,y);
+  ctx.lineTo(width,y);
+  ctx.stroke();
+ }
+
+ ctx.strokeStyle="#91a7b8";
+ ctx.beginPath();
+ ctx.moveTo(0,middle);
+ ctx.lineTo(width,middle);
+ ctx.stroke();
+
+ ctx.fillStyle="#60788c";
+ ctx.font="11px Arial";
+ ctx.fillText("0 V",5,middle-5);
+
+ if(samples.length<2)return;
+
+ const scale = Math.max(
+  1,
+  ...samples.map(v=>Math.abs(v))
+ );
+
+ ctx.beginPath();
+ ctx.strokeStyle="#1685d0";
+ ctx.lineWidth=2;
+
+ samples.forEach((v,i)=>{
+  const x=i/(Math.max(1,samples.length-1))*width;
+  const y=middle-v/scale*(height*.42);
+
+  if(i===0)ctx.moveTo(x,y);
+  else ctx.lineTo(x,y);
+ });
+
+ ctx.stroke();
+
+ ctx.fillStyle="#536f83";
+ ctx.fillText("+"+scale.toFixed(1)+" V",5,12);
+ ctx.fillText("-"+scale.toFixed(1)+" V",5,height-5);
+}
+
+// =============================
+// ANIMATION LOOP
+// =============================
+
+let turbineAngle = 0;
+
+function animate(time){
+
+ if(previousTime===null)previousTime=time;
+
+ // Cap elapsed time after switching browser tabs
+ const dt=Math.min((time-previousTime)/1000,0.05);
+ previousTime=time;
+
+ if(running){
+
+  const water=Number(flow.value)/100;
+  const speed=water*240;
+  const omega=speed*TWO_PI/60;
+
+  angle=(angle+omega*dt)%TWO_PI;
+  turbineAngle=(turbineAngle+omega*dt*180/Math.PI)%360;
+
+  $("turbine").setAttribute(
+   "transform",`rotate(${turbineAngle} 232 241)`
+  );
+
+  $("rotor").setAttribute(
+   "transform",`rotate(${angle*180/Math.PI} 500 240)`
+  );
+
+  calculate();
+
+  samples.push(voltage);
+  if(samples.length>240)samples.shift();
+
+  updateDisplay();
+ }
+
+ drawGraph();
+ requestAnimationFrame(animate);
+}
+
+// =============================
+// BUTTONS
+// =============================
+
+$("start").onclick=()=>{
+ running=true;
+ calculate();
+ updateDisplay();
+};
+
+$("pause").onclick=()=>{
+ running=false;
+ calculate();
+ updateDisplay();
+};
+
+$("reset").onclick=()=>{
+
+ running=false;
+ angle=0;
+ turbineAngle=0;
+ samples=[];
+
+ flow.value=50;
+ magnet.value=1;
+ turns.value=100;
+ resistance.value=20;
+
+ $("turbine").removeAttribute("transform");
+ $("rotor").removeAttribute("transform");
+
+ updateLabels();
+ calculate();
+ updateDisplay();
+ drawGraph();
+};
+
+// INITIALISE
+updateLabels();
+calculate();
+updateDisplay();
+requestAnimationFrame(animate);
+
+</script>
+</body>
+</html>
